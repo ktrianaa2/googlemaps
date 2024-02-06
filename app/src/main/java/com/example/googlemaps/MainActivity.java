@@ -18,11 +18,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener
 {
     GoogleMap mapa;
+    private int contador = 0;
+    private ArrayList<LatLng> puntos = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +45,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mapa = googleMap;
         mapa.setOnMapClickListener(this);
 
-        PolylineOptions lineas = new
-                PolylineOptions()
-                .add(new LatLng(45.0, -12.0))
-                .add(new LatLng(45.0, 5.0))
-                .add(new LatLng(34.5, 5.0))
-                .add(new LatLng(34.5, -12.0))
-                .add(new LatLng(45.0, -12.0));
+        CameraUpdate camUpd1 = CameraUpdateFactory.newLatLngZoom(new LatLng(-1.012569747818524, -79.46954114585787), 17);
+        mapa.moveCamera(camUpd1);
+
+        PolylineOptions lineas = new PolylineOptions()
+                .add(new LatLng(-1.0119858275267548, -79.47158283128604))
+                .add(new LatLng(-1.0129263982999144, -79.47163214309582))
+                .add(new LatLng(-1.0131509364880045, -79.46732184243038))
+                .add(new LatLng(-1.0123568247655028, -79.46729313511372))
+                .add(new LatLng(-1.0119858275267548, -79.47158283128604));
         lineas.width(8);
         lineas.color(Color.RED);
         mapa.addPolyline(lineas);
@@ -63,7 +70,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
              //           .newLatLngZoom(new LatLng( 40.689282829455024, -74.04451839977278), 17);
         // mapa.moveCamera(camUpd1);
 
-        LatLng lugar = new LatLng(27.17525931078609, 78.04203490765134);
+        LatLng lugar = new LatLng(-1.0124663039271578, -79.46953959888509);
         CameraPosition camPos = new CameraPosition.Builder()
                 .target(lugar)
                 .zoom(20)
@@ -84,8 +91,31 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 latLng.longitude);
         mapa.addMarker(new
                 MarkerOptions().position(punto)
-                .title("Marker in Sydney"));
+                .title("Marca"));
+
+        contador++;
+        puntos.add(latLng);
+
+        mapa.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+
+        if (contador == 4) {
+            dibujarCuadrado();
+
+            // contador = 0;
+        }
+
     }
 
+    private void dibujarCuadrado() {
+        PolygonOptions cuadradoOptions = new PolygonOptions();
+        for (LatLng punto : puntos) {
+            cuadradoOptions.add(punto);
+        }
+
+        cuadradoOptions.strokeWidth(5);
+        cuadradoOptions.strokeColor(Color.BLUE);
+
+        mapa.addPolygon(cuadradoOptions);
+    }
 
 }
