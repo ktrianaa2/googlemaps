@@ -3,6 +3,7 @@ package com.example.googlemaps;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener
 {
@@ -37,6 +39,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mapa = googleMap;
         mapa.setOnMapClickListener(this);
+
+        PolylineOptions lineas = new
+                PolylineOptions()
+                .add(new LatLng(45.0, -12.0))
+                .add(new LatLng(45.0, 5.0))
+                .add(new LatLng(34.5, 5.0))
+                .add(new LatLng(34.5, -12.0))
+                .add(new LatLng(45.0, -12.0));
+        lineas.width(8);
+        lineas.color(Color.RED);
+        mapa.addPolyline(lineas);
     }
 
     public void ConfigMap (View view) {
