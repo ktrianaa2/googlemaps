@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 
@@ -38,6 +39,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 getSupportFragmentManager()
                         .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        puntos  = new ArrayList<LatLng>();
+        contador=0;
     }
 
     @Override
@@ -45,15 +49,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mapa = googleMap;
         mapa.setOnMapClickListener(this);
 
-        CameraUpdate camUpd1 = CameraUpdateFactory.newLatLngZoom(new LatLng(-1.012569747818524, -79.46954114585787), 17);
+        CameraUpdate camUpd1 =
+                CameraUpdateFactory
+                        .newLatLngZoom(new LatLng(-1.012509212579253,
+                                -79.46950741279677), 17);
         mapa.moveCamera(camUpd1);
 
-        PolylineOptions lineas = new PolylineOptions()
-                .add(new LatLng(-1.0119858275267548, -79.47158283128604))
-                .add(new LatLng(-1.0129263982999144, -79.47163214309582))
-                .add(new LatLng(-1.0131509364880045, -79.46732184243038))
-                .add(new LatLng(-1.0123568247655028, -79.46729313511372))
-                .add(new LatLng(-1.0119858275267548, -79.47158283128604));
+        PolylineOptions lineas = new
+                PolylineOptions()
+                .add(new LatLng(-1.0123668827998387, -79.46721848497673))
+                .add(new LatLng(-1.0134825073655847, -79.46740087517409))
+                .add(new LatLng(-1.0131821469433566, -79.4718318840867))
+                .add(new LatLng(-1.0119163420009807, -79.47187479942727))
+                .add(new LatLng(-1.0123668827998387, -79.46721848497673));
         lineas.width(8);
         lineas.color(Color.RED);
         mapa.addPolyline(lineas);
@@ -64,58 +72,54 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mapa.getUiSettings().setZoomControlsEnabled(true);
     }
 
-    public void MoveMapa (View view) {
-        // CameraUpdate camUpd1 =
-           //     CameraUpdateFactory
-             //           .newLatLngZoom(new LatLng( 40.689282829455024, -74.04451839977278), 17);
-        // mapa.moveCamera(camUpd1);
+    public void MoveMap(View view){
 
-        LatLng lugar = new LatLng(-1.0124663039271578, -79.46953959888509);
+        LatLng madrid = new LatLng(27.17516231214711, 78.04214977189152);
         CameraPosition camPos = new CameraPosition.Builder()
-                .target(lugar)
+                .target(madrid)
                 .zoom(20)
-                .bearing(85) //noreste arriba
-                .tilt(70) //punto de vista de la cámara 70 grados
+                .bearing(85)
+                .tilt(70)
                 .build();
         CameraUpdate camUpd3 =
                 CameraUpdateFactory.newCameraPosition(camPos);
         mapa.animateCamera(camUpd3);
     }
 
+
     @Override
     public void onMapClick(LatLng latLng) {
-        Toast.makeText(getApplicationContext(),
-                "Lat: " + latLng.latitude + "\n" + "Lng: " + latLng.longitude + "\n",
-                Toast.LENGTH_SHORT).show();
-        LatLng punto = new LatLng(latLng.latitude,
-                latLng.longitude);
-        mapa.addMarker(new
-                MarkerOptions().position(punto)
-                .title("Marca"));
+         /*Toast.makeText(getApplicationContext(),
+                "Lat: " + latLng.latitude + "\n" + "Lng: " +
+latLng.longitude + "\n",
+                Toast.LENGTH_SHORT).show();*/
 
-        contador++;
+        mapa.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title("Punto"));
+
         puntos.add(latLng);
+        contador++;
+        if(contador==4){
+            PolylineOptions lineas = new
+                    PolylineOptions()
+                    .add(puntos.get(0))
+                    .add(puntos.get(1))
+                    .add(puntos.get(2))
+                    .add(puntos.get(3))
+                    .add(puntos.get(0));
+            lineas.width(8);
+            lineas.color(Color.RED);
+            mapa.addPolyline(lineas);
 
-        mapa.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+            double area = SphericalUtil.computeArea(puntos);
+            Toast.makeText(getApplicationContext(), "Área del poligono: " + area, Toast.LENGTH_SHORT).show();
 
-        if (contador == 4) {
-            dibujarCuadrado();
 
-            // contador = 0;
+            contador=0;
+            puntos.clear();
         }
 
-    }
-
-    private void dibujarCuadrado() {
-        PolygonOptions cuadradoOptions = new PolygonOptions();
-        for (LatLng punto : puntos) {
-            cuadradoOptions.add(punto);
-        }
-
-        cuadradoOptions.strokeWidth(5);
-        cuadradoOptions.strokeColor(Color.BLUE);
-
-        mapa.addPolygon(cuadradoOptions);
     }
 
 }
