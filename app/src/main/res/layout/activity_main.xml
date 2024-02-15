@@ -42,7 +42,7 @@
         android:layout_height="36dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="12dp"
-        android:onClick="MoveMapa"
+        android:onClick="MoveMap"
         android:text="Mover"
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/map"
